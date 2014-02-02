@@ -19,5 +19,3 @@ man/
 mk/
 sbin/
 testbin/
-*~
-.gitignore
