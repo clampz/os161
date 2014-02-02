@@ -62,6 +62,7 @@ int safethreadcounter(int nargs, char **args) {
 	}
 
 	sem_destroy(s);
+	sem_destroy(d);
 
 	kprintf("\nThe final value of sharedThreadCount is: %d.\n", sharedThreadCount);
 
