@@ -113,8 +113,11 @@ lock_create(const char *name)
 		kfree(lock);
 		return NULL;
 	}
-	
+
+	lock->owner_thread_id = NULL;
+
 	// add stuff here as needed
+	assert(lock->owner_thread_id == NULL); // make sure that no thread is holding the lock.
 	
 	return lock;
 }
@@ -125,35 +128,97 @@ lock_destroy(struct lock *lock)
 	assert(lock != NULL);
 
 	// add stuff here as needed
+	assert(lock->owner_thread_id == NULL); // make sure that no thread is holding the lock.
 	
 	kfree(lock->name);
 	kfree(lock);
 }
 
+/* lock_acquire pseudocode --
+ * check if the lock has a thread owner, if so, sleep and check again.
+ * else, set the lock thread owner to the current thread name
+ * */
 void
 lock_acquire(struct lock *lock)
 {
+	(void)lock;  // suppress warning until code gets written
 	// Write this
 
-	(void)lock;  // suppress warning until code gets written
+	// okay - -
+	int spl;
+
+	assert(in_interrupt == 0);
+
+	assert(lock != NULL);
+
+	spl = splhigh();
+
+	// while the lock has a thread owner
+	while (lock->owner_thread_id != NULL) {
+		thread_sleep(lock);
+	}
+
+	assert(lock->owner_thread_id == NULL);
+	lock->owner_thread_id = curthread->t_name;
+	splx(spl);
+
 }
 
+/* lock_release pseudocode --
+ * check if the lock's thread owner is equal to the current thread id, if not, return.
+ * else set the lock's thread owner to null.
+ * */
 void
 lock_release(struct lock *lock)
 {
-	// Write this
 
+	// Write this
 	(void)lock;  // suppress warning until code gets written
+
+	// you got it, bud - -
+	int spl;
+	assert(in_interrupt == 0);
+	assert(lock != NULL);
+
+	spl = splhigh();
+	if (strcmp(lock->owner_thread_id, curthread->t_name) != 0) panic("%s is trying to release a lock when it is not the owner.\n", curthread->t_name);
+
+	lock->owner_thread_id = NULL;
+
+	thread_wakeup(lock);
+	splx(spl);
+
 }
 
+/* do_i_hold pseudocode --
+ * if lock has no thread holding it, return 0
+ * return 1 if current thread has the same id as the thread
+ * holding the lock 'lock'.
+ * else, return 0
+ * */
 int
 lock_do_i_hold(struct lock *lock)
 {
 	// Write this
-
 	(void)lock;  // suppress warning until code gets written
 
-	return 1;    // dummy until code gets written
+	// k
+
+//	int spl;
+	assert(in_interrupt == 0);
+	assert(lock != NULL);
+
+//	spl = splhigh();
+
+	// should the check below be an assert instead?
+	if (lock->owner_thread_id == NULL) return 0;
+
+//	splx(spl);
+
+	return !strcmp(lock->owner_thread_id, curthread->t_name);
+
+	return 1;
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -199,6 +264,23 @@ cv_wait(struct cv *cv, struct lock *lock)
 	// Write this
 	(void)cv;    // suppress warning until code gets written
 	(void)lock;  // suppress warning until code gets written
+/*
+	int spl;
+
+	assert(in_interrupt == 0);
+	assert(lock != NULL);
+	assert(!strcmp(lock->owner_thread_id, curthread->t_name));
+
+	spl = splhigh();
+
+	lock_release(lock);
+
+	thread_sleep(cv);
+
+	lock_acquire(lock);
+
+	slpx(spl);
+*/
 }
 
 void
@@ -207,6 +289,19 @@ cv_signal(struct cv *cv, struct lock *lock)
 	// Write this
 	(void)cv;    // suppress warning until code gets written
 	(void)lock;  // suppress warning until code gets written
+/*
+	int spl;
+
+	assert(in_interrupt == 0);
+	assert(lock != NULL);
+	assert(!strcmp(lock->owner_thread_id, curthread->t_name));
+
+	spl = splhigh();
+
+	thread_wake_only_one(cv);
+
+	splx(spl);
+*/
 }
 
 void

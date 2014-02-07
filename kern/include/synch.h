@@ -50,6 +50,10 @@ void              sem_destroy(struct semaphore *);
 
 struct lock {
 	char *name;
+
+	volatile char *owner_thread_id; // i think this is a nice way to keep track of who owns the lock
+
+
 	// add what you need here
 	// (don't forget to mark things volatile as needed)
 };
@@ -91,6 +95,7 @@ struct cv {
 	char *name;
 	// add what you need here
 	// (don't forget to mark things volatile as needed)
+	volatile char *owner_thread_id; // i think this is a nice way to keep track of who owns the cv
 };
 
 struct cv *cv_create(const char *name);

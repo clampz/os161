@@ -129,6 +129,7 @@ locktestthread(void *junk, unsigned long num)
 
 	for (i=0; i<NLOCKLOOPS; i++) {
 		lock_acquire(testlock);
+		putch('a');
 		testval1 = num;
 		testval2 = num*num;
 		testval3 = num%3;

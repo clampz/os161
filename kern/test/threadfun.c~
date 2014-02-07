@@ -10,8 +10,10 @@
 #include <synch.h>
 
 static volatile int sharedThreadCount;
-static struct semaphore *s;
-static struct semaphore *d;
+static struct lock *s = NULL;
+//
+//static struct semaphore *s;
+//static struct semaphore *d;
 
 /* increment for exercise 5
  * enforces mutual exclusion with semaphores
@@ -20,13 +22,16 @@ void semIncrementThread(void *junk, unsigned long num) {
 
 	(void) junk;
 
-	P(s);
+	//P(s);
+	lock_acquire(s);
 
 	sharedThreadCount += num;
 
 	putch('a');
 
-	V(d);
+	lock_release(s);
+
+	//V(d);
 
 }
 
@@ -37,31 +42,46 @@ void semIncrementThread(void *junk, unsigned long num) {
 int safethreadcounter(int nargs, char **args) {
 
 	int result, i, maxthreads, nincrements;
+	char *child_thread_name;
 	(void) nargs;
 
 	sharedThreadCount = 0;
 	maxthreads = atoi(args[1]);
 	nincrements = atoi(args[2]);
-	s = sem_create("thread_count_test_sem", 0);
-	d = sem_create("thread_count_test_done_sem", 0);
+//	s = sem_create("thread_count_test_sem", 0);
+//	d = sem_create("thread_count_test_done_sem", 0);
+	s = lock_create("thread_count_test_lock");
+
+	if (s == NULL) panic("lock create failed!!\n");
 
 	kprintf("%s", "\nBegin threadfun test number 3..\n\n");
 
 	for (i = 0; i < maxthreads; i++) {
 
-		result = thread_fork("threadfun3_child", NULL, nincrements, semIncrementThread, NULL);
+		//"threadfun_child_num10"
+	//	child_thread_name = (char *) kmalloc(sizeof(char) * 22);
+	//	vsnprintf(child_thread_name, 22, "threadfun_child_num%d", i);
+		*child_thread_name = '0' + i;
+		kprintf("\nspawning thread %s.\n", child_thread_name);
+		result = thread_fork(child_thread_name, NULL, nincrements, semIncrementThread, NULL);
 		if (result) panic("threadfun: thread_fork failed: %s\n\n", strerror(result));
+	//	kfree(child_thread_name);
 
 	}
 
-	for (i = 0; i < maxthreads; i++) {
+//	for (i = 0; i < maxthreads; i++) {
 
-		V(s);
-		P(d);
+//		V(s);
+//		P(d);
 
-	}
+//	}
 
-	sem_destroy(s);
+//	sem_destroy(s);
+//	sem_destroy(d);
+
+	lock_acquire(s);
+	lock_release(s);
+	lock_destroy(s);
 
 	kprintf("\nThe final value of sharedThreadCount is: %d.\n", sharedThreadCount);
 
