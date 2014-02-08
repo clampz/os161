@@ -27,8 +27,6 @@ void semIncrementThread(void *junk, unsigned long num) {
 
 	sharedThreadCount += num;
 
-	putch('a');
-
 	lock_release(s);
 
 	//V(d);
@@ -58,14 +56,10 @@ int safethreadcounter(int nargs, char **args) {
 
 	for (i = 0; i < maxthreads; i++) {
 
-		//"threadfun_child_num10"
-	//	child_thread_name = (char *) kmalloc(sizeof(char) * 22);
-	//	vsnprintf(child_thread_name, 22, "threadfun_child_num%d", i);
 		*child_thread_name = '0' + i;
 		kprintf("\nspawning thread %s.\n", child_thread_name);
 		result = thread_fork(child_thread_name, NULL, nincrements, semIncrementThread, NULL);
 		if (result) panic("threadfun: thread_fork failed: %s\n\n", strerror(result));
-	//	kfree(child_thread_name);
 
 	}
 

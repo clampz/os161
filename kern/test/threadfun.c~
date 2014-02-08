@@ -78,7 +78,7 @@ int safethreadcounter(int nargs, char **args) {
 
 //	sem_destroy(s);
 //	sem_destroy(d);
-
+	thread_yield();
 	lock_acquire(s);
 	lock_release(s);
 	lock_destroy(s);
