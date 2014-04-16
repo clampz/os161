@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#
+#
+#
+
+./configure --ostree=$HOME/SOS-os161/os161_lab5/root --toolprefix=mips-harvard-os161-
+cd kern/conf
+./config ASST0
+cd ../compile/ASST0
+make depend
+make
+make install
+
+cd $HOME/SOS-os161/os161_lab5/os161-1.11
+make
+
