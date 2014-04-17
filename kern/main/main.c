@@ -68,7 +68,7 @@ boot(void)
 
 	kprintf("David's system version %s (%s #%d)\n", 
 		GROUP_VERSION, buildconfig, buildversion);
-	sys_helloworld();
+	//sys_helloworld();
 	kprintf("\n");
 
 	ram_bootstrap();
@@ -150,18 +150,6 @@ sys_reboot(int code)
 
 	panic("reboot operation failed\n");
 	return 0;
-}
-
-/* david's sys__exit for project02 part 2
- *
- * */
-int
-sys__exit(void)
-{
-
-	thread_exit();
-	panic("[DWEXIT] thread_exit failed\n");
-
 }
 
 /*

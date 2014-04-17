@@ -9,6 +9,10 @@ int sys_reboot(int code);
 
 int sys_helloworld(void);
 
-int sys__exit(void);
+void sys__exit(void);
+
+int sys_printint(int);
+
+int sys_printstring(char *, int);
 
 #endif /* _SYSCALL_H_ */

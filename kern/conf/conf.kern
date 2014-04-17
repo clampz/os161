@@ -385,6 +385,13 @@ file      userprog/uio.c
 file	  userprog/simple_syscalls.c
 
 #
+# More user-level system calls.
+#
+#
+
+file	  syscalls/level1.c
+
+#
 # Virtual memory system
 # (you will probably want to add stuff here while doing the VM assignment)
 #

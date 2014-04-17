@@ -328,6 +328,7 @@ uio.o: ../../userprog/uio.c ../../include/types.h machine/types.h \
   machine/setjmp.h ../../include/uio.h ../../include/thread.h \
   machine/pcb.h ../../include/curthread.h
 simple_syscalls.o: ../../userprog/simple_syscalls.c
+level1.o: ../../syscalls/level1.c
 arraytest.o: ../../test/arraytest.c ../../include/types.h machine/types.h \
   ../../include/kern/types.h machine/ktypes.h ../../include/lib.h \
   machine/setjmp.h ../../include/array.h ../../include/test.h

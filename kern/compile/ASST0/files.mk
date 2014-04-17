@@ -404,6 +404,11 @@ simple_syscalls.o: ${S}/userprog/simple_syscalls.c
 SRCS+=${S}/userprog/simple_syscalls.c
 OBJS+=simple_syscalls.o
 
+level1.o: ${S}/syscalls/level1.c
+	${COMPILE.c} ${S}/syscalls/level1.c
+SRCS+=${S}/syscalls/level1.c
+OBJS+=level1.o
+
 arraytest.o: ${S}/test/arraytest.c
 	${COMPILE.c} ${S}/test/arraytest.c
 SRCS+=${S}/test/arraytest.c
